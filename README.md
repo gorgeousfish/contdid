@@ -2,19 +2,19 @@
 
 **Continuous Treatment Difference-in-Differences**
 
-Recover the *entire dose-response curve* — not just a single coefficient — when treatments vary in intensity.
+Estimate the full dose-response curve when treatments vary in intensity, rather than reducing continuous policy variation to a single coefficient.
 
 ## Statement of Need
 
-Standard Difference-in-Differences (DiD) tools estimate a single average treatment effect for a binary intervention. But many real-world policies are continuous: tax rate changes differ across regions, subsidy amounts vary by firm size, pollution exposure levels differ by proximity to a source, and healthcare reimbursement cuts vary by hospital.
+Standard Difference-in-Differences (DiD) tools estimate a single average treatment effect for a binary intervention. Yet many policies of interest are continuous: tax rate changes differ across regions, subsidy amounts vary by firm size, pollution exposure levels differ by proximity to a source, and healthcare reimbursement cuts vary by hospital.
 
-Reducing continuous variation to binary "treated vs. untreated" throws away most of the policy-relevant information. Researchers need to know *how much* the outcome responds as dose increases — the full dose-response curve.
+Collapsing continuous variation into binary "treated vs. untreated" discards the dose-response structure that is often central to policy evaluation. Researchers need to know *how much* the outcome responds as dose increases, not just *whether* it responds.
 
-**contdid** fills this gap in the Python ecosystem. It estimates ATT(*d*) — the average treatment effect on the treated as a function of dose *d* — recovering the complete shape of how outcomes respond to treatment intensity. No existing Python package provides this capability.
+**contdid** provides a Python implementation of the Caetano, Callaway, Payne & Rodrigues (2024) continuous-treatment DiD framework. It estimates ATT(*d*), the average treatment effect on the treated as a function of dose *d*, recovering the shape of how outcomes respond to treatment intensity. No other Python package currently implements these estimators.
 
 ## Key Concepts
 
-**ATT(*d*)** — Average Treatment Effect on the Treated at dose *d*:
+**ATT(*d*)**: Average Treatment Effect on the Treated at dose *d*.
 
 $$
 \text{ATT}(d) = E[Y_t(d) - Y_t(0) \mid D = d, G \leq t]
@@ -22,7 +22,7 @@ $$
 
 The effect of receiving dose *d* compared to receiving no treatment, for units who actually received dose *d*.
 
-**ACRT(*d*)** — Average Causal Response Trajectory:
+**ACRT(*d*)**: Average Causal Response Trajectory.
 
 $$
 \text{ACRT}(d) = \frac{\partial}{\partial d} \text{ATT}(d)
@@ -30,7 +30,7 @@ $$
 
 The marginal effect of an additional unit of dose at level *d*.
 
-**Identification assumption**: Conditional parallel trends — absent treatment, units at every dose level would have followed parallel outcome paths to untreated units.
+**Identification assumption**: Conditional parallel trends: absent treatment, units at every dose level would have followed parallel outcome paths to untreated units.
 
 ## When to Use / When Not to Use
 
@@ -45,13 +45,13 @@ The marginal effect of an additional unit of dose at level *d*.
 ## Installation
 
 ```bash
-pip install git+https://github.com/gorgeousfish/contdid-py.git
+pip install git+https://github.com/gorgeousfish/contdid.git
 ```
 
 With plotting support:
 
 ```bash
-pip install "contdid-py[plotting] @ git+https://github.com/gorgeousfish/contdid-py.git"
+pip install "contdid[plotting] @ git+https://github.com/gorgeousfish/contdid.git"
 ```
 
 **Requirements:** Python ≥ 3.11, numpy, pandas, scipy
@@ -205,8 +205,8 @@ Reject at 5%:   False
 
 | Parameter            | Option              | Description                                                                                                      |
 | -------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `dose_est_method`  | `"parametric"`    | B-spline OLS — flexible, supports multi-period                                                                  |
-|                      | `"cck"`           | CCK sieve estimation — nonparametric, two-period only                                                           |
+| `dose_est_method`  | `"parametric"`    | B-spline OLS; flexible, supports multi-period                                                                   |
+|                      | `"cck"`           | CCK sieve estimation; nonparametric, two-period only                                                            |
 | `aggregation`      | `"dose"`          | Dose-response curve ATT(*d*)                                                                                   |
 |                      | `"eventstudy"`    | Event-time dynamics ATT(*event_time*)                                                                          |
 | `control_group`    | `"nevertreated"`  | Never-treated units as comparison                                                                                |
@@ -277,7 +277,7 @@ result = cont_did(
 Bootstrap inference uses thread-level parallelism (`ThreadPoolExecutor`) for
 large-scale problems (biters >= 200, multiple chunks). NumPy releases the GIL
 during matrix operations, enabling 15-67% speedup on multi-core machines.
-Results are reproducible via `numpy.random.SeedSequence` — the same seed
+Results are reproducible via `numpy.random.SeedSequence`: the same seed
 always yields identical output regardless of thread count.
 
 ## Current Limitations & Future Directions
@@ -287,16 +287,16 @@ always yields identical output regardless of thread count.
 - CCK estimation restricted to two-period, non-staggered designs
 - Lepski adaptive dimension selection restricted to two-period panels
 - Event-study CCK supports fixed-dimension mode only (no adaptive Lepski)
-- Large panels (N > 50,000) may require patience for bootstrap inference
+- Large panels (N > 50,000) benefit from the built-in thread-parallel bootstrap, though wall time scales linearly with `biters`
 - **Covariate adjustment**: Not available. The paper (arXiv:2107.02637v7) provides only a conceptual framework for conditional parallel trends without complete estimation theory.
 - **Discrete treatment**: Not available. Only continuous treatment is implemented; multi-valued discrete treatment (paper Assumption 4b) awaits implementation.
 
 ### Future Directions
 
-- Doubly-robust estimators with flexible nuisance function estimation
-- GPU-accelerated bootstrap for large-scale panels
+- Covariate adjustment under conditional parallel trends, pending complete estimation theory for the propensity-score reweighting step
+- Multi-valued discrete treatment via the saturated regression estimator of Assumption 4b in Caetano et al. (2024)
+- Joint coverage theory for multi-period CCK aggregation (extending the two-period uniform band to event-study designs)
 - Additional DGP scenarios for simulation and testing
-- Integration with causal forest methods for heterogeneous dose effects
 
 ## Citation
 
@@ -340,8 +340,8 @@ Cai, X., & Xu, W. (2025). *contdid-py: Continuous Treatment Difference-in-Differ
 
 **Python Implementation:**
 
-- Xuanyu Cai, City University of Macau — xuanyuCAI@outlook.com
-- Wenli Xu, City University of Macau — wlxu@cityu.edu.mo
+- Xuanyu Cai, City University of Macau, xuanyuCAI@outlook.com
+- Wenli Xu, City University of Macau, wlxu@cityu.edu.mo
 
 **Methodology:**
 
@@ -359,7 +359,7 @@ Based on:
 | Package                                        | Language | Description                                 |
 | ---------------------------------------------- | -------- | ------------------------------------------- |
 | [contdid](https://github.com/bcallaway11/contdid) | R        | Reference implementation by Callaway et al. |
-| [contdid-stata](https://github.com/)              | Stata    | Stata implementation for continuous DiD     |
+| [contdid-stata](https://github.com/contdid/contdid-stata) | Stata    | Stata implementation for continuous DiD     |
 | [did](https://github.com/bcallaway11/did)         | R        | Binary treatment staggered DiD              |
 | [pydid](https://github.com/d2cml-ai/pydid)        | Python   | Binary treatment DiD for Python             |
 
