@@ -302,7 +302,7 @@ always yields identical output regardless of thread count.
 
 **APA:**
 
-Cai, X., & Xu, W. (2025). *contdid-py: Continuous Treatment Difference-in-Differences for Python* (Version 0.1.0) [Computer software]. https://github.com/gorgeousfish/contdid-py
+Cai, X., & Xu, W. (2025). *contdid-py: Continuous Treatment Difference-in-Differences for Python* (Version 0.1.0) [Computer software]. https://github.com/gorgeousfish/contdid
 
 **BibTeX:**
 
@@ -311,7 +311,7 @@ Cai, X., & Xu, W. (2025). *contdid-py: Continuous Treatment Difference-in-Differ
   title = {contdid-py: Continuous Treatment Difference-in-Differences for Python},
   author = {Cai, Xuanyu and Xu, Wenli},
   year = {2025},
-  url = {https://github.com/gorgeousfish/contdid-py},
+  url = {https://github.com/gorgeousfish/contdid},
   version = {0.1.0}
 }
 ```
