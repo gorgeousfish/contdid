@@ -14,7 +14,7 @@ Theoretical boundaries for CCK in event study
   coverage theory. Use fixed-dimension CCK (num_knots parameter) instead.
 
 Anticipation support
--------------------
+--------------------
 - CGBS Assumption 3-MP(a) defines "no anticipation" with parameter a >= 0.
   When anticipation=a > 0, the base period shifts from g-1 to g-1-a.
   This is handled by timing.py's prepare_timing_groups().

@@ -140,6 +140,9 @@ class InfluenceFunction:
 
         Aggregates influence functions within clusters before computing
         the outer product:
+
+        .. code-block:: text
+
             Cov_c = (1/n^2) * sum_c (IF_c)(IF_c)'
             where IF_c = sum_{i in cluster c} IF_i
 
@@ -259,7 +262,7 @@ class InfluenceFunction:
         Algorithm:
         1. Draw ξ ~ N(0, 1) of shape (biters, n_units)
         2. Compute bootstrap statistics: T_b = (1/n_total) * ξ_b @ IF
-        3. Standardize: max_j |T_b,j / SE_j|
+        3. Standardize: max_j \|T_b,j / SE_j\|
         4. Critical value: quantile of max_stat at 1-alpha
 
         Parameters
@@ -423,14 +426,20 @@ def aggregate_influence_functions(
     a local IF weighted by the relative treated sample size.
 
     Each local IF_k has values V_{k,i} satisfying:
-      Var(θ̂_k) = V_k'V_k / n_k²
-
-    For the aggregate θ̂ = Σ w_k θ̂_k (with normalized weights), assuming
+    
+    .. code-block:: text
+    
+        Var(\u0302\u03b8_k) = V_k'V_k / n_k\u00b2
+    
+    For the aggregate \u0302\u03b8 = \u03a3 w_k \u0302\u03b8_k (with normalized weights), assuming
     independence across (g,t) pairs:
-      Var(θ̂) = Σ_k w_k² * Var(θ̂_k) = Σ_k w_k² * V_k'V_k / n_k²
-
+    
+    .. code-block:: text
+    
+        Var(\u0302\u03b8) = \u03a3_k w_k\u00b2 * Var(\u0302\u03b8_k) = \u03a3_k w_k\u00b2 * V_k'V_k / n_k\u00b2
+    
     We store aggregated IF_agg_i = w_k * V_{k,i} / n_k and set n_total = 1,
-    so that covariance() = IF_agg'IF_agg / 1² gives the correct variance.
+    so that covariance() = IF_agg'IF_agg / 1\u00b2 gives the correct variance.
     """
     # Theory (CGBS Appendix B.2): Aggregated IF for unit i across K local
     # estimates is: IF_agg,i = sum_k (w_k / n_k) * IF_k,i

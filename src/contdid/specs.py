@@ -45,6 +45,7 @@ class ContDIDSpec:
         aggregation: "dose" for dose-response or "eventstudy" for event-study.
         dose_est_method: "parametric" for B-spline OLS or "cck" for CCK sieve.
         control_group: Which units serve as the comparison group.
+
             - "notyettreated" (default): Uses never-treated (G=0) AND
               not-yet-treated (G>t) units as controls. Recommended for
               staggered adoption designs; maximizes control-group sample size
@@ -53,8 +54,9 @@ class ContDIDSpec:
             - "nevertreated": Uses only never-treated (G=0) units as controls.
               Suitable when a sufficient pool of never-treated units exists
               and the researcher prefers a fixed comparison group.
-            See arXiv-2107.02637v7, Section A3 (Assumption 3-MP) for the
-            multi-period identification theory supporting both strategies.
+
+            Both strategies are supported by the multi-period identification
+            theory in arXiv-2107.02637v7, Section A3 (Assumption 3-MP).
         treatment_type: Treatment type (default "continuous").
         anticipation: Number of anticipation periods (default 0).
         alp: Significance level (default 0.05).

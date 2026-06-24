@@ -108,6 +108,7 @@ def cont_did(
         Number of interior knots (default 0 = global polynomial).
     knot_method : str, default "quantile"
         Interior knot placement strategy.
+
         - "quantile": Place knots at quantiles of the positive dose distribution.
           Adapts to the data distribution; recommended when dose values cluster.
           Matches R package's choose_knots_quantile().
