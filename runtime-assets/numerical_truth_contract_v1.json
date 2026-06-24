@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.2",
+  "phase": 2,
+  "source_bundle": "phase2_contract_template.json",
+  "numerical_truth": {
+    "dgp_ids": [
+      "SIM-001-null-dose",
+      "SIM-002-linear-dose",
+      "SIM-003-quadratic-dose",
+      "SIM-004-staggered-eventstudy-null",
+      "SIM-005-cck-two-period"
+    ],
+    "seed_candidates": [
+      1234,
+      20260407,
+      20261234
+    ],
+    "seed_registry": [
+      {
+        "dgp_id": "SIM-001-null-dose",
+        "default_seed": 1234
+      },
+      {
+        "dgp_id": "SIM-002-linear-dose",
+        "default_seed": 20260407
+      },
+      {
+        "dgp_id": "SIM-003-quadratic-dose",
+        "default_seed": 20261234
+      },
+      {
+        "dgp_id": "SIM-004-staggered-eventstudy-null",
+        "default_seed": 20260407
+      },
+      {
+        "dgp_id": "SIM-005-cck-two-period",
+        "default_seed": 20261234
+      }
+    ],
+    "comparison_targets": [
+      "point estimate",
+      "standard error",
+      "band / confidence interval",
+      "summary aggregation",
+      "sign / monotonic segment / support",
+      "event-time index semantics"
+    ],
+    "notes": [
+      "Treat point estimates, standard errors, confidence bands, summary aggregates, and sign/monotonic diagnostics as separate tolerance families.",
+      "Do not relax tolerances without updating automation/contracts/numerical-truth-contract.md and attaching fresh rerun evidence.",
+      "Use tolerance_families as the machine-readable gate registry before any parity or Monte Carlo test sets fixture-level tolerances."
+    ],
+    "tolerance_families": [
+      {
+        "comparison_target": "point estimate",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 4,
+        "calibration_rule": "Set fixture-level atol/rtol from contdid-r parity outputs before asserting dose-level estimator equality."
+      },
+      {
+        "comparison_target": "standard error",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 6,
+        "calibration_rule": "Set fixture-level atol/rtol from bootstrap or analytic-inference parity outputs before asserting standard-error equality."
+      },
+      {
+        "comparison_target": "band / confidence interval",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 6,
+        "calibration_rule": "Set fixture-level atol/rtol from inference-band parity outputs before asserting confidence-interval equality."
+      },
+      {
+        "comparison_target": "summary aggregation",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 4,
+        "calibration_rule": "Set fixture-level atol/rtol from treated-dose aggregation parity outputs before asserting summary-effect equality."
+      },
+      {
+        "comparison_target": "sign / monotonic segment / support",
+        "tolerance_mode": "exact_rule",
+        "required_from_phase": 4,
+        "calibration_rule": "Support membership, sign restrictions, and monotonic-segment diagnostics must match exactly; do not relax this gate via numeric tolerances."
+      },
+      {
+        "comparison_target": "event-time index semantics",
+        "tolerance_mode": "exact_rule",
+        "required_from_phase": 5,
+        "calibration_rule": "Event-time labels, ordering, and exposure-length semantics must match exactly; parity runs should fail on any index drift."
+      }
+    ]
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "schema_version": "0.1",
+  "phase": 4,
+  "application_id": "phase4-package-parity-expected",
+  "source_registry": {
+    "numerical_truth_contract": "contdid-py/contracts/phase2/numerical_truth_contract_v1.json",
+    "root_oracle_manifest": "reproduction/phase4_parametric_reference/manifest.json",
+    "root_oracle_fixture": "reproduction/phase4_parametric_reference/phase4_parametric_reference.json",
+    "simulate_manifest": "reproduction/simulate_contdid/manifest.json",
+    "phase4_plan": ".planning/phases/04-dose-level-slope-parametric-b-spline/04-03-PLAN.md"
+  },
+  "public_dose_surface_execution": {
+    "sample_size": 64000,
+    "num_time_periods": 2,
+    "num_groups": 2,
+    "pg": [0.75],
+    "pu": 0.25,
+    "seed_rule": "use scenario default_seed",
+    "rationale": "package-side parity must evaluate the closed-form dose oracle on the supported public two-period dose surface instead of the simulator's default four-period staggered panel"
+  },
+  "evaluation_grid": [0.1, 0.3, 0.5, 0.7, 0.9],
+  "comparison_target_contract": {
+    "required_targets": [
+      {
+        "name": "point estimate",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 4,
+        "calibration_status": "pending_estimator_rerun"
+      },
+      {
+        "name": "summary aggregation",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 4,
+        "calibration_status": "pending_estimator_rerun"
+      },
+      {
+        "name": "sign / monotonic segment / support",
+        "tolerance_mode": "exact_rule",
+        "required_from_phase": 4,
+        "calibration_status": "exact_rule_no_numeric_tolerance"
+      }
+    ],
+    "deferred_targets": [
+      {
+        "name": "standard error",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 6
+      },
+      {
+        "name": "band / confidence interval",
+        "tolerance_mode": "fixture_numeric",
+        "required_from_phase": 6
+      },
+      {
+        "name": "event-time index semantics",
+        "tolerance_mode": "exact_rule",
+        "required_from_phase": 5
+      }
+    ],
+    "note": "No fixture-level numeric tolerances are pinned here until package-side estimator reruns exist. Package-side parity must consume the explicit supported two-period public dose surface recorded above rather than the simulator's default four-period staggered panel. Any future tolerance change must update automation/contracts/numerical-truth-contract.md with fresh evidence."
+  },
+  "scenarios": {
+    "SIM-001-null-dose": {
+      "default_seed": 1234,
+      "phase4_required_targets": [
+        "point estimate",
+        "summary aggregation",
+        "sign / monotonic segment / support"
+      ],
+      "deferred_targets": [
+        "standard error",
+        "band / confidence interval",
+        "event-time index semantics"
+      ],
+      "expected_shape": {
+        "att_curve": "flat zero",
+        "acrt_curve": "flat zero"
+      },
+      "shape_diagnostics": {
+        "att_sign": "zero",
+        "att_monotonicity": "flat",
+        "acrt_sign": "zero",
+        "acrt_monotonicity": "flat"
+      },
+      "dose_grid": [0.1, 0.3, 0.5, 0.7, 0.9],
+      "att_curve": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "acrt_curve": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "summary_aggregates": {
+        "overall_att": 0.0,
+        "overall_acrt": 0.0,
+        "overall_att_uniform_support": 0.0,
+        "overall_acrt_uniform_support": 0.0
+      }
+    },
+    "SIM-002-linear-dose": {
+      "default_seed": 20260407,
+      "phase4_required_targets": [
+        "point estimate",
+        "summary aggregation",
+        "sign / monotonic segment / support"
+      ],
+      "deferred_targets": [
+        "standard error",
+        "band / confidence interval",
+        "event-time index semantics"
+      ],
+      "expected_shape": {
+        "att_curve": "strictly increasing linear",
+        "acrt_curve": "flat positive"
+      },
+      "shape_diagnostics": {
+        "att_sign": "nonnegative",
+        "att_monotonicity": "strictly increasing linear",
+        "acrt_sign": "positive",
+        "acrt_monotonicity": "flat positive"
+      },
+      "dose_grid": [0.1, 0.3, 0.5, 0.7, 0.9],
+      "att_curve": [0.1, 0.3, 0.5, 0.7, 0.9],
+      "acrt_curve": [1.0, 1.0, 1.0, 1.0, 1.0],
+      "summary_aggregates": {
+        "overall_att": 0.5,
+        "overall_acrt": 1.0,
+        "overall_att_uniform_support": 0.5,
+        "overall_acrt_uniform_support": 1.0
+      }
+    },
+    "SIM-003-quadratic-dose": {
+      "default_seed": 20261234,
+      "phase4_required_targets": [
+        "point estimate",
+        "summary aggregation",
+        "sign / monotonic segment / support"
+      ],
+      "deferred_targets": [
+        "standard error",
+        "band / confidence interval",
+        "event-time index semantics"
+      ],
+      "expected_shape": {
+        "att_curve": "strictly increasing convex",
+        "acrt_curve": "strictly increasing linear"
+      },
+      "shape_diagnostics": {
+        "att_sign": "positive",
+        "att_monotonicity": "strictly increasing convex",
+        "acrt_sign": "positive",
+        "acrt_monotonicity": "strictly increasing linear"
+      },
+      "dose_grid": [0.1, 0.3, 0.5, 0.7, 0.9],
+      "att_curve": [0.01, 0.09, 0.25, 0.49, 0.81],
+      "acrt_curve": [0.2, 0.6, 1.0, 1.4, 1.8],
+      "summary_aggregates": {
+        "overall_att": 0.3333333333333333,
+        "overall_acrt": 1.0,
+        "overall_att_uniform_support": 0.3333333333333333,
+        "overall_acrt_uniform_support": 1.0
+      }
+    }
+  }
+}

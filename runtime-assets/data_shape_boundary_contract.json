@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1",
+  "phase": 12,
+  "contract_id": "phase12-data-shape-boundary",
+  "source_contracts": {
+    "paper_multi_period_panel_setup": "arXiv-2107.02637v7/main.tex:1405-1444",
+    "paper_multi_period_parallel_trends": "arXiv-2107.02637v7/main.tex:1609-1623",
+    "r_reference_not_yet_supported": "contdid-r/README.Rmd:81-97",
+    "python_panel_container": "contdid-py/src/contdid/data.py:12-40",
+    "python_runtime_guard": "contdid-py/src/contdid/validation.py:101-156",
+    "runtime_regression_tests": [
+      "contdid-py/tests/test_phase3_validation_contracts.py",
+      "contdid-py/tests/test_phase3_objects.py",
+      "tests/test_phase12_data_shape_contract.py"
+    ],
+    "release_docs": [
+      "README.md",
+      "docs/help/public-api.md"
+    ]
+  },
+  "supported_data_shape_predicate": {
+    "container": "PanelData",
+    "sampling_frame": "balanced long panel",
+    "required_observed_fields": [
+      "id",
+      "time_period",
+      "Y",
+      "G",
+      "D"
+    ],
+    "unit_level_invariants": {
+      "balanced_panel": "each id must appear exactly once per observed time period",
+      "dose_constancy": "D must be constant within id",
+      "group_constancy": "G must be constant within id",
+      "absorbing_treatment": "after treatment starts, the experienced dose remains fixed by D"
+    },
+    "unsupported_if_false": true
+  },
+  "unsupported_cases": [
+    {
+      "id": "unbalanced_panel",
+      "predicate": "panel violates unique id/time pairs or each-id complete observed time support",
+      "error": "panel must be balanced",
+      "truth_anchor": "contdid-r/README.Rmd:91-92",
+      "python_guard": "validate_panel_data"
+    },
+    {
+      "id": "repeated_cross_sections",
+      "predicate": "input is not a unit-level panel that observes the same id over time",
+      "error": "repeated cross-sections data is not supported by the PanelData contract",
+      "truth_anchor": "contdid-r/README.Rmd:91",
+      "python_guard": "PanelData only exposes id/time long-panel inputs"
+    },
+    {
+      "id": "time_varying_dose",
+      "predicate": "D changes within id across observed time periods",
+      "error": "panel violates within-unit D constancy",
+      "truth_anchor": "arXiv-2107.02637v7/main.tex:1407-1422",
+      "python_guard": "validate_panel_data"
+    },
+    {
+      "id": "covariate_aware_identification",
+      "predicate": "a caller asks for covariate-dose interaction or nonparametric covariate adjustment",
+      "error": "additive covariate adjustment is supported via ContDIDSpec.covariates; interaction terms and nonparametric covariate adjustment are not supported",
+      "truth_anchor": "contdid-r/README.Rmd:97",
+      "python_guard": "ContDIDSpec.covariates accepts optional additive covariate columns; interaction and nonparametric routes raise ContDIDValidationError"
+    }
+  ],
+  "non_goals": [
+    "Do not infer repeated cross-section support from row-level pandas input.",
+    "Do not treat extra metadata columns as covariate-adjusted identification.",
+    "Do not add covariate-dose interaction or nonparametric covariate adjustment without a paper/reference-supported contract.",
+    "Do not relax balanced-panel, G constancy, or D constancy guards."
+  ],
+  "verification_contract": {
+    "minimum_runtime_tests": [
+      "test_validate_panel_data_enforces_phase3_validation_panel_invariants",
+      "test_validate_panel_data_rejects_unbalanced_panel",
+      "test_phase12_data_shape_contract_rejects_repeated_cross_section_and_covariate_route_drift",
+      "test_phase12_estimator_ignores_extra_columns_and_rejects_repeated_cross_sections"
+    ],
+    "minimum_runtime_test_nodes": [
+      "contdid-py/tests/test_phase3_validation_contracts.py::test_validate_panel_data_enforces_phase3_validation_panel_invariants",
+      "contdid-py/tests/test_phase3_objects.py::test_validate_panel_data_rejects_unbalanced_panel",
+      "tests/test_phase12_data_shape_contract.py::test_phase12_data_shape_contract_rejects_repeated_cross_section_and_covariate_route_drift",
+      "tests/test_phase12_data_shape_contract.py::test_phase12_estimator_ignores_extra_columns_and_rejects_repeated_cross_sections"
+    ],
+    "minimum_contract_tests": [
+      "tests/test_phase12_data_shape_contract.py"
+    ]
+  }
+}

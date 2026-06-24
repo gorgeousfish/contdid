@@ -1,0 +1,129 @@
+{
+  "schema_version": "0.1",
+  "application_id": "phase6-package-inference-expected",
+  "scenarios": {
+    "SIM-004-staggered-eventstudy-null": {
+      "default_seed": 20260407,
+      "grid": {
+        "values": [
+          -2,
+          -1,
+          0,
+          1,
+          2
+        ],
+        "label": "event_time_grid"
+      },
+      "summary_aggregates": {
+        "overall_level": 0.009191223586305359,
+        "post_treatment_mean_level": 0.010944026856696926
+      },
+      "std_error": [
+        0.028481240352662876,
+        0.020746911683475425,
+        0.016915657061667096,
+        0.021070948888600064,
+        0.03052471708185388
+      ],
+      "critical_value": 2.414439128260325,
+      "confidence_band": {
+        "lower": [
+          -0.10507419938352994,
+          -0.0389987293400743,
+          -0.03709455261207365,
+          -0.036058407885353104,
+          -0.0594313779901183
+        ],
+        "upper": [
+          0.032458242874182336,
+          0.06118558137821441,
+          0.044589095967770574,
+          0.06569063904706568,
+          0.08796876461289035
+        ],
+        "critical_value": 2.414439128260325
+      },
+      "exact_rule_targets": {
+        "support": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "event_time_grid": [
+          -2,
+          -1,
+          0,
+          1,
+          2
+        ]
+      },
+      "slope": {
+        "summary_aggregates": {
+          "overall_slope": 0.006256548090091788,
+          "post_treatment_mean_slope": 0.012447175555497467
+        },
+        "std_error": [
+          0.08564221226318801,
+          0.060521352680264456,
+          0.050379182881557585,
+          0.061674575159325055,
+          0.0882014754472397
+        ],
+        "critical_value": 2.407082202052922,
+        "confidence_band": {
+          "lower": [
+            -0.13078330741821204,
+            -0.16345914402730957,
+            -0.12363526733962013,
+            -0.14394857349462123,
+            -0.1771054408964778
+          ],
+          "upper": [
+            0.28151238234810466,
+            0.1279005977343554,
+            0.11889840159671286,
+            0.15296297087575197,
+            0.24751096259123914
+          ],
+          "critical_value": 2.407082202052922
+        },
+        "exact_rule_targets": {
+          "support": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "event_time_grid": [
+            -2,
+            -1,
+            0,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    "SIM-005-cck-two-period": {
+      "default_seed": 20261234,
+      "grid": {
+        "values": [
+          0.2,
+          0.5,
+          0.8
+        ],
+        "label": "dose_grid"
+      },
+      "summary_aggregates": {},
+      "std_error": [],
+      "critical_value": null,
+      "confidence_band": {},
+      "exact_rule_targets": {
+        "unsupported_eventstudy_message": "Lepski adaptive dimension selection is not supported in event-study aggregation"
+      }
+    }
+  }
+}

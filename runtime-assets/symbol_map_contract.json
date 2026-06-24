@@ -1,0 +1,121 @@
+{
+  "schema_version": "0.2",
+  "phase": 2,
+  "source_bundle": "phase2_contract_template.json",
+  "symbol_map": [
+    {
+      "paper_symbol": "D",
+      "python_name": "dose",
+      "kind": "vector",
+      "description": "Post-treatment dose amount, constant within unit across periods and zeroed out for never-treated units.",
+      "paper_ref": "main.tex:366-370; cont_did.Rd:dname; setup_pte_cont.R:80-86"
+    },
+    {
+      "paper_symbol": "\\Delta Y",
+      "python_name": "delta_outcome",
+      "kind": "vector",
+      "description": "First-difference outcome Y_post - Y_pre used as the basic regression target.",
+      "paper_ref": "main.tex:397-400,683-688; cont_did.R:389-391"
+    },
+    {
+      "paper_symbol": "LATT(d|d)",
+      "python_name": "latt_local_by_dose",
+      "kind": "estimand",
+      "description": "PT-identified local level-effect curve evaluated at the realized dose group.",
+      "paper_ref": "main.tex:330-400"
+    },
+    {
+      "paper_symbol": "ATT(d)",
+      "python_name": "att_curve",
+      "kind": "estimand",
+      "description": "SPT-identified global level-effect curve among treated units.",
+      "paper_ref": "main.tex:517-521,683-718"
+    },
+    {
+      "paper_symbol": "ACRT(d)",
+      "python_name": "acrt_curve",
+      "kind": "estimand",
+      "description": "SPT-identified marginal response curve, implemented as a derivative or adjacent-dose slope.",
+      "paper_ref": "main.tex:523-538,683-720"
+    },
+    {
+      "paper_symbol": "\\psi^{\\widehat{K}}(d)",
+      "python_name": "bspline_basis",
+      "kind": "basis",
+      "description": "Cubic B-spline basis evaluated at dose d for ATT(d) estimation.",
+      "paper_ref": "main.tex:712-720; cont_did.R:404-417"
+    },
+    {
+      "paper_symbol": "\\partial \\psi^{\\widehat{K}}(d)",
+      "python_name": "bspline_derivative_basis",
+      "kind": "basis",
+      "description": "Derivative of the spline basis used to map the fitted curve into ACRT(d).",
+      "paper_ref": "main.tex:718-720; cont_did.R:416-430"
+    },
+    {
+      "paper_symbol": "\\widehat{K}",
+      "python_name": "selected_sieve_dimension",
+      "kind": "tuning_parameter",
+      "description": "Data-driven CCK sieve dimension chosen before constructing the spline basis and confidence bands.",
+      "paper_ref": "main.tex:712-720; adaptive-nov22-2023-final.tex:333-440"
+    }
+  ],
+  "fidelity_rules": [
+    {
+      "name": "target_parameter",
+      "allowed_values": [
+        "level",
+        "slope"
+      ],
+      "paper_link": "main.tex:185-199,793-811",
+      "implementation_note": "level targets ATT-family level effects; slope targets ACRT-family causal responses and requires stronger interpretation care under strong parallel trends.",
+      "r_reference": "cont_did.R:22-34,101-127; README.md:97-115"
+    },
+    {
+      "name": "aggregation",
+      "allowed_values": [
+        "dose",
+        "eventstudy"
+      ],
+      "paper_link": "main.tex:198-199,799-811",
+      "implementation_note": "dose collapses across timing groups onto the dose axis; eventstudy collapses across doses onto exposure length and remains the preferred parallel-trends diagnostic surface.",
+      "r_reference": "cont_did.R:25-34,101-132,159-186; README.md:109-117,216-280"
+    },
+    {
+      "name": "dose_est_method",
+      "allowed_values": [
+        "parametric",
+        "cck"
+      ],
+      "paper_link": "main.tex:698-720",
+      "implementation_note": "parametric uses a user-specified spline/polynomial parity path; cck uses the adaptive sieve estimator and is currently restricted to two-period, non-staggered dose aggregation.",
+      "r_reference": "cont_did.R:41-47,104,139-186; README.md:316-354"
+    },
+    {
+      "name": "control_group",
+      "allowed_values": [
+        "notyettreated",
+        "nevertreated",
+        "eventuallytreated"
+      ],
+      "paper_link": "main.tex:793-799",
+      "implementation_note": "the paper derivations use never-treated notation, but the R implementation also exposes not-yet-treated and eventually-treated comparison sets for staggered designs; fidelity code must preserve the chosen comparison semantics.",
+      "r_reference": "cont_did.R:84,109,132,299; README.md:184,236,280,354"
+    }
+  ],
+  "public_api_boundary": {
+    "public_terms": [
+      "dose",
+      "event_time",
+      "att",
+      "acrt"
+    ],
+    "internal_trace_terms": [
+      "target_parameter",
+      "aggregation",
+      "dose_est_method",
+      "control_group"
+    ],
+    "boundary_note": "Public Python APIs may stay Pythonic, but they must preserve traceability back to the paper/R runtime enums recorded above."
+  }
+}

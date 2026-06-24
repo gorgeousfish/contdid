@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+
+# Testing
+.pytest_cache/
+.hypothesis/
+.tox/
+.coverage
+htmlcov/
+
+# Type checking / Linting
+.mypy_cache/
+.ruff_cache/
+
+# Build
+dist/
+build/
+build_backend/
+
+# Internal development contracts
+contracts/
+
+# Environment
+.env
+
+# IDE
+.ipynb_checkpoints/
+*.swp
+.idea/
+.vscode/
+
+# OS
+.DS_Store

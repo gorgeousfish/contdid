@@ -1,0 +1,137 @@
+{
+  "schema_version": "0.1",
+  "phase": 11,
+  "contract_id": "phase11-cck-unsupported-boundary",
+  "source_contracts": {
+    "paper_cck_appendix": "arXiv-2107.02637v7/main.tex:1274-1370",
+    "paper_multi_period_identification": "arXiv-2107.02637v7/main.tex:1407-1640",
+    "adaptive_cck_reference": "arXiv-2107.11869v3/adaptive-nov22-2023-final.tex:130-211,336-440",
+    "r_reference_entrypoint": "contdid-r/R/cont_did.R:175-186",
+    "r_reference_cck_backend": "contdid-r/R/cont_did.R:192-231",
+    "python_cck_backend": "contdid-py/src/contdid/cck.py:1-25,103-152",
+    "python_runtime_guard": "contdid-py/src/contdid/validation.py:290-317,420-448",
+    "python_eventstudy_gate": "contdid-py/src/contdid/eventstudy.py:101-120",
+    "runtime_regression_tests": [
+      "contdid-py/tests/test_phase6_cck_guards.py",
+      "contdid-py/tests/test_phase5_eventstudy.py"
+    ],
+    "release_docs": [
+      "README.md",
+      "docs/help/public-api.md"
+    ]
+  },
+  "supported_cck_predicate": {
+    "dose_est_method": "cck",
+    "aggregation": "dose",
+    "target_parameter": [
+      "level",
+      "slope"
+    ],
+    "panel_shape": {
+      "unique_time_period_count": 2,
+      "treated_cohort_count": 1,
+      "positive_treatment_timing": "must equal the last observed time period",
+      "untreated_benchmark": "must include D == 0 units"
+    },
+    "unsupported_if_false": true
+  },
+  "supported_cck_backend_scope": {
+    "runtime_basis_type": "cck_polynomial_backend",
+    "basis_family": "fixed quadratic polynomial",
+    "basis_degree": 2,
+    "sieve_selection": "not implemented: no data-driven K-hat, Lepski, or npiv sieve selection is exposed by the runtime backend",
+    "adaptive_cck_status": "unsupported boundary until a paper/reference-supported adaptive CCK backend contract lands"
+  },
+  "unsupported_cases": [
+    {
+      "id": "cck_requires_one_treated_cohort",
+      "predicate": "dose_est_method == 'cck' and panel has no positive treatment timing cohort",
+      "error": "cck estimator requires exactly one positive treatment timing cohort",
+      "precedence": 1,
+      "r_reference": "contdid-r/R/cont_did.R:175-179",
+      "python_guard": "validate_spec"
+    },
+    {
+      "id": "cck_staggered_adoption",
+      "predicate": "dose_est_method == 'cck' and panel has more than one positive treatment timing cohort",
+      "error": "cck estimator not supported with staggered adoption yet",
+      "precedence": 2,
+      "r_reference": "contdid-r/R/cont_did.R:175-179",
+      "python_guard": "validate_spec"
+    },
+    {
+      "id": "cck_requires_two_periods",
+      "predicate": "dose_est_method == 'cck' and panel has one treated cohort but more than two observed time periods",
+      "error": "cck estimator not supported with more than two time periods. consider averaging across pre and post treatment periods",
+      "precedence": 3,
+      "r_reference": "contdid-r/R/cont_did.R:181-183",
+      "python_guard": "validate_spec"
+    },
+    {
+      "id": "cck_requires_post_period_timing",
+      "predicate": "dose_est_method == 'cck' and panel has two observed periods with one positive treatment timing cohort that does not equal the last observed period",
+      "error": "cck estimator requires positive treatment timing to start in the post period",
+      "precedence": 4,
+      "r_reference": "contdid-r/R/cont_did.R:175-186",
+      "python_guard": "validate_spec"
+    },
+    {
+      "id": "cck_eventstudy",
+      "predicate": "dose_est_method == 'cck' and aggregation == 'eventstudy'",
+      "error": "supported (fixed-dimension CCK); adaptive Lepski NOT supported in event-study aggregation",
+      "precedence": 5,
+      "r_reference": "contdid-r/R/cont_did.R:185-186",
+      "python_guard": "validate_spec",
+      "status": "implemented"
+    },
+    {
+      "id": "cck_eventstudy_control_group_relaxation",
+      "predicate": "dose_est_method == 'cck' and aggregation == 'eventstudy' and control_group is outside the checked public event-study set",
+      "error": "must be one of the CCK panel-shape/event-study errors above, never a relaxed event-study control-group fit",
+      "precedence": 6,
+      "r_reference": "contdid-r/R/cont_did.R:175-186",
+      "python_guard": "validate_spec"
+    }
+  ],
+    "guard_precedence": [
+        "cck_requires_one_treated_cohort",
+        "cck_staggered_adoption",
+        "cck_requires_two_periods",
+        "cck_requires_post_period_timing",
+        "cck_eventstudy",
+        "cck_eventstudy_control_group_relaxation"
+    ],
+  "non_goals": [
+    "Do not implement CCK event-study estimation without a new paper/reference-supported estimator contract.",
+    "Do not infer staggered-adoption CCK support from the multi-period identification discussion alone; the paper does not provide formal multi-period CCK estimation results.",
+    "Do not claim full data-driven Lepski/npiv adaptive CCK parity on the current cck_polynomial_backend; it is a fixed quadratic polynomial scaffold until a paper/reference-supported adaptive backend lands.",
+    "Do not let base_period or control_group options relax the unsupported CCK boundary."
+  ],
+  "verification_contract": {
+    "minimum_runtime_tests": [
+      "test_cck_rejects_staggered_adoption_with_exact_manifest_substring",
+      "test_cck_requires_one_positive_treatment_timing_cohort",
+      "test_cck_staggered_adoption_guard_precedes_multi_period_guard",
+      "test_cck_dose_staggered_guard_precedes_unchecked_control_group",
+      "test_cck_requires_exactly_two_time_periods",
+      "test_cck_requires_positive_timing_in_post_period_with_cck_error",
+      "test_eventstudy_cck_path_stays_hard_failed",
+      "test_eventstudy_cck_post_timing_guard_precedes_eventstudy_guard",
+      "test_eventstudy_cck_staggered_guard_precedes_multi_period_and_control_group"
+    ],
+    "minimum_runtime_test_nodes": [
+      "contdid-py/tests/test_phase6_cck_guards.py::test_cck_rejects_staggered_adoption_with_exact_manifest_substring",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_cck_requires_one_positive_treatment_timing_cohort",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_cck_staggered_adoption_guard_precedes_multi_period_guard",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_cck_dose_staggered_guard_precedes_unchecked_control_group",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_cck_requires_exactly_two_time_periods",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_cck_requires_positive_timing_in_post_period_with_cck_error",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_eventstudy_cck_path_stays_hard_failed",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_eventstudy_cck_post_timing_guard_precedes_eventstudy_guard",
+      "contdid-py/tests/test_phase6_cck_guards.py::test_eventstudy_cck_staggered_guard_precedes_multi_period_and_control_group"
+    ],
+    "minimum_contract_tests": [
+      "tests/test_phase11_cck_boundary_contract.py"
+    ]
+  }
+}

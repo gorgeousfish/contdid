@@ -1,0 +1,166 @@
+{
+  "schema_version": "0.2",
+  "application_id": "medicare-pps-hospitals",
+  "title": "Medicare PPS hospital input-mix application",
+  "source_packet": "reproduction/medicare_pps/source_options.json",
+  "source_registry": "reproduction/medicare_pps/source_registry.json",
+  "raw_staging_contract": "reproduction/medicare_pps/raw/README.md",
+  "source_paper": {
+    "title": "Continuous Difference-in-Differences in Practice: Causal Effects of Medicare PPS",
+    "paper_path": "arXiv-2107.02637v7/main.tex",
+    "paper_refs": [
+      "main.tex:200-200",
+      "main.tex:220-246",
+      "main.tex:814-977"
+    ],
+    "upstream_application": {
+      "citation_key": "acemoglu-finkelstein-2008",
+      "paper_ref": "empirical_refs.bib:1463-1470"
+    }
+  },
+  "access": {
+    "status": "license-required",
+    "blocking_reason": "The paper states that the empirical design uses annual hospital reports from the American Hospital Association; those raw files are not bundled in this repository.",
+    "phase7_route": "Acquire licensed AHA survey extracts for 1980-1986 or document a public substitute before claiming empirical parity.",
+    "primary_sources": [
+      "aha_direct_license",
+      "nber_affiliate_extract"
+    ],
+    "substitute_candidates": [
+      "cms_hcris_hospital_cost_reports",
+      "nber_hcris_hosp"
+    ]
+  },
+  "data_sources": [
+    {
+      "name": "American Hospital Association Annual Survey",
+      "years": [
+        1980,
+        1981,
+        1982,
+        1983,
+        1984,
+        1985,
+        1986
+      ],
+      "role": "Primary hospital-level panel used by Acemoglu and Finkelstein and the contdid paper's reproduction.",
+      "paper_ref": "main.tex:220-220,241-241"
+    }
+  ],
+  "sample_contract": {
+    "original_hospitals": 6741,
+    "balanced_panel_hospitals": 5881,
+    "dropped_for_missing_outcomes": 860,
+    "positive_dose_observations": 4987,
+    "paper_ref": "main.tex:241-241,815-815,864-880"
+  },
+  "dose_contract": {
+    "symbol": "M",
+    "variable": "1983 Medicare inpatient share",
+    "treated_rule": "M > 0",
+    "untreated_rule": "M = 0",
+    "notes": [
+      "The dose is measured on a 0 to 1 scale.",
+      "The mean treated dose reported in the paper is 0.45 with standard deviation 0.15."
+    ],
+    "paper_ref": "main.tex:220-222,815-817,822-823,844-856"
+  },
+  "outcome_contract": {
+    "variable": "depreciation share of total operating expenses",
+    "interpretation": "capital-labor ratio proxy",
+    "paper_ref": "main.tex:220-220,241-241,844-856"
+  },
+  "time_aggregation": {
+    "balanced_panel_years": [
+      1980,
+      1981,
+      1982,
+      1983,
+      1984,
+      1985,
+      1986
+    ],
+    "two_period_panel": {
+      "pre_years": [
+        1980,
+        1981,
+        1982,
+        1983
+      ],
+      "post_years": [
+        1984,
+        1985,
+        1986
+      ],
+      "paper_ref": "main.tex:815-815"
+    },
+    "event_study": {
+      "baseline_year": 1983,
+      "reported_years": [
+        1980,
+        1981,
+        1982,
+        1983,
+        1984,
+        1985,
+        1986
+      ],
+      "paper_ref": "main.tex:915-915"
+    }
+  },
+  "published_targets": {
+    "twfe_beta": 1.14,
+    "latt_loc": 0.8,
+    "latt_loc_standard_error": 0.05,
+    "acrt_glob": -0.08,
+    "acrt_glob_standard_error": 0.19,
+    "selected_sieve_dimension": 4,
+    "mean_1983_outcome": 4.5,
+    "paper_ref": "main.tex:864-880,899-899,934-934"
+  },
+  "published_targets_scope": {
+    "source": "paper reported targets from arXiv-2107.02637v7/main.tex:864-880,899-899,934-934",
+    "status": "unmet parity targets until licensed AHA inputs and paper-supported adaptive CCK estimation are available",
+    "selected_sieve_dimension": "paper reported CCK target; not produced by the current cck_polynomial_backend runtime"
+  },
+  "phase7_gate": {
+    "parity_requires_source": "AHA Annual Survey",
+    "required_years": [
+      1980,
+      1981,
+      1982,
+      1983,
+      1984,
+      1985,
+      1986
+    ],
+    "blocked_without": [
+      "hospital-level panel covering 1980-1986",
+      "1983 Medicare inpatient share",
+      "depreciation share of total operating expenses"
+    ],
+    "substitute_analysis_policy": "descriptive-or-scaffold-only"
+  },
+  "figure_targets": [
+    {
+      "figure_id": "F4",
+      "description": "Binned scatter of outcome changes against 1983 Medicare inpatient share.",
+      "paper_ref": "main.tex:844-856"
+    },
+    {
+      "figure_id": "F5",
+      "description": "Nonparametric LATT(m|m) estimate with pointwise and uniform bands.",
+      "paper_ref": "main.tex:864-880"
+    },
+    {
+      "figure_id": "F7",
+      "description": "Event-study estimates of ATT using 1983 as baseline.",
+      "paper_ref": "main.tex:915-928"
+    },
+    {
+      "figure_id": "F8",
+      "description": "Nonparametric ACRT(m) estimate with pointwise and uniform bands.",
+      "paper_ref": "main.tex:932-959"
+    }
+  ]
+}

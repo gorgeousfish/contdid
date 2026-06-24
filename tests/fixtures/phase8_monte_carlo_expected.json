@@ -1,0 +1,333 @@
+{
+  "schema_version": "0.1",
+  "phase": 8,
+  "application_id": "phase8-package-calibration-expected",
+  "source_registry": {
+    "phase8_manifest": "reproduction/phase8_monte_carlo/manifest.json",
+    "phase6_reference_fixture": "reproduction/phase6_inference/phase6_inference_reference.json",
+    "phase7_smoke_manifest": "reproduction/medicare_pps/e2e_smoke_manifest.json"
+  },
+  "tolerance_registry": {
+    "point estimate": {
+      "tolerance_mode": "fixture_numeric",
+      "required_from_phase": 4
+    },
+    "standard error": {
+      "tolerance_mode": "fixture_numeric",
+      "required_from_phase": 6
+    },
+    "band / confidence interval": {
+      "tolerance_mode": "fixture_numeric",
+      "required_from_phase": 6
+    },
+    "summary aggregation": {
+      "tolerance_mode": "fixture_numeric",
+      "required_from_phase": 4
+    },
+    "sign / monotonic segment / support": {
+      "tolerance_mode": "exact_rule",
+      "required_from_phase": 4
+    },
+    "event-time index semantics": {
+      "tolerance_mode": "exact_rule",
+      "required_from_phase": 5
+    }
+  },
+  "empirical_reference": {
+    "mode": "descriptive-or-scaffold-only",
+    "source_manifest": "reproduction/medicare_pps/e2e_smoke_manifest.json",
+    "parity_claim_allowed": false
+  },
+  "scenarios": {
+    "SIM-001-null-dose": {
+      "default_seed": 1234,
+      "sample_size": 16000,
+      "biters": 199,
+      "degree": 2,
+      "level": {
+        "estimand": "ATT(d)",
+        "grid": [
+          0.1,
+          0.3,
+          0.5,
+          0.7,
+          0.9
+        ],
+        "estimate": [
+          -0.004382800532580556,
+          0.012830249858461824,
+          0.013864653434380704,
+          -0.00127958980482391,
+          -0.032602479859152045
+        ],
+        "std_error": [
+          0.034711919180099166,
+          0.028292873922297616,
+          0.02953552348982749,
+          0.028343900416155542,
+          0.03457298473803312
+        ],
+        "critical_value": 2.176473260040299,
+        "confidence_band": {
+          "lower": [
+            -0.07993236443274637,
+            -0.04874843368311044,
+            -0.050418623662520964,
+            -0.06296933114583156,
+            -0.1078496566612625
+          ],
+          "upper": [
+            0.07116676336758526,
+            0.07440893340003409,
+            0.07814793053128237,
+            0.06041015153618373,
+            0.042644696942958416
+          ],
+          "critical_value": 2.176473260040299
+        },
+        "summary": {
+          "overall_att": -0.002762308555666516,
+          "overall_att_uniform_support": -0.0023139933807427965,
+          "dose_grid_mean_att": -0.0023139933807427965,
+          "dose_grid_min": 0.1,
+          "dose_grid_max": 0.9
+        },
+        "metadata_expectations": {
+          "target_parameter": "level",
+          "bootstrap_type": "multiplier",
+          "inference": "bootstrap"
+        }
+      },
+      "slope": {
+        "estimand": "ACRT(d)",
+        "grid": [
+          0.1,
+          0.3,
+          0.5,
+          0.7,
+          0.9
+        ],
+        "estimate": [
+          0.1265118689930206,
+          0.045618634917403166,
+          -0.03527459915821435,
+          -0.11616783323383181,
+          -0.1970610673094493
+        ],
+        "std_error": [
+          0.15010772859820473,
+          0.08504507673798054,
+          0.04571632347186627,
+          0.08428690081002045,
+          0.14925000276881323
+        ],
+        "critical_value": 2.1674501874621446,
+        "confidence_band": {
+          "lower": [
+            -0.19883915549667494,
+            -0.13871233260106522,
+            -0.13436245303739094,
+            -0.2988554921951138,
+            -0.5205530137894391
+          ],
+          "upper": [
+            0.45186289348271613,
+            0.22994960243587156,
+            0.06381325472096225,
+            0.06651982572745019,
+            0.1264308791705405
+          ],
+          "critical_value": 2.1674501874621446
+        },
+        "summary": {
+          "overall_acrt": -0.03496128324427453,
+          "overall_acrt_uniform_support": -0.035274599158214334,
+          "dose_grid_mean_acrt": -0.035274599158214334,
+          "dose_grid_min": 0.1,
+          "dose_grid_max": 0.9
+        },
+        "metadata_expectations": {
+          "target_parameter": "slope",
+          "bootstrap_type": "multiplier",
+          "inference": "bootstrap"
+        }
+      },
+      "exact_rule_targets": {
+        "level_abs_max": 0.06,
+        "slope_abs_max": 0.13
+      }
+    },
+    "SIM-004-staggered-eventstudy-null": {
+      "default_seed": 20260407,
+      "sample_size": 16000,
+      "biters": 199,
+      "degree": 1,
+      "level": {
+        "estimand": "ATT(event_time)",
+        "grid": [
+          -2,
+          -1,
+          0,
+          1,
+          2
+        ],
+        "estimate": [
+          -0.0363079782546738,
+          0.011093426019070053,
+          0.0037472716778484613,
+          0.01481611558085629,
+          0.014268693311386027
+        ],
+        "std_error": [
+          0.028481240352662876,
+          0.020746911683475425,
+          0.016915657061667096,
+          0.021070948888600064,
+          0.03052471708185388
+        ],
+        "critical_value": 2.414439128260325,
+        "confidence_band": {
+          "lower": [
+            -0.10507419938352994,
+            -0.0389987293400743,
+            -0.03709455261207365,
+            -0.036058407885353104,
+            -0.0594313779901183
+          ],
+          "upper": [
+            0.032458242874182336,
+            0.06118558137821441,
+            0.044589095967770574,
+            0.06569063904706568,
+            0.08796876461289035
+          ],
+          "critical_value": 2.414439128260325
+        },
+        "summary": {
+          "overall_level": 0.009191223586305359,
+          "post_treatment_mean_level": 0.010944026856696926
+        },
+        "metadata_expectations": {
+          "target_parameter": "level",
+          "aggregation": "eventstudy",
+          "control_group": "notyettreated",
+          "inference": "bootstrap"
+        }
+      },
+      "exact_rule_targets": {
+        "support": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "event_time_grid": [
+          -2,
+          -1,
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    "SIM-005-cck-two-period": {
+      "default_seed": 20261234,
+      "sample_size": 12000,
+      "biters": 199,
+      "level": {
+        "estimand": "ATT(d)",
+        "grid": [
+          0.2,
+          0.5,
+          0.8
+        ],
+        "estimate": [
+          0.2557488693587666,
+          0.5890916759523925,
+          0.9618956085875761
+        ],
+        "std_error": [
+          0.031731402282043256,
+          0.03219242098798448,
+          0.03123338157559658
+        ],
+        "critical_value": 2.122481140670111,
+        "confidence_band": {
+          "lower": [
+            0.1883995664481133,
+            0.5207638695328828,
+            0.895603345234019
+          ],
+          "upper": [
+            0.32309817226941995,
+            0.6574194823719023,
+            1.028187871941133
+          ],
+          "critical_value": 2.122481140670111
+        },
+        "summary": {
+          "overall_att": 0.608946989911363,
+          "overall_att_uniform_support": 0.6022453846329118,
+          "dose_grid_mean_att": 0.6022453846329118,
+          "dose_grid_min": 0.2,
+          "dose_grid_max": 0.8
+        },
+        "metadata_expectations": {
+          "target_parameter": "level",
+          "bootstrap_type": "multiplier",
+          "source_estimator": "phase6_cck_backend",
+          "dose_est_method": "cck"
+        }
+      },
+      "slope": {
+        "estimand": "ACRT(d)",
+        "grid": [
+          0.2,
+          0.5,
+          0.8
+        ],
+        "estimate": [
+          1.0453741452428238,
+          1.1769112320480162,
+          1.3084483188532081
+        ],
+        "std_error": [
+          0.14515754698349234,
+          0.05731701970918054,
+          0.1420536843349593
+        ],
+        "critical_value": 2.1807777980022442,
+        "confidence_band": {
+          "lower": [
+            0.728817789568756,
+            1.0519155480185782,
+            0.9986607979311097
+          ],
+          "upper": [
+            1.3619305009168916,
+            1.3019069160774541,
+            1.6182358397753065
+          ],
+          "critical_value": 2.1807777980022442
+        },
+        "summary": {
+          "overall_acrt": 1.1774785076547654,
+          "overall_acrt_uniform_support": 1.176911232048016,
+          "dose_grid_mean_acrt": 1.176911232048016,
+          "dose_grid_min": 0.2,
+          "dose_grid_max": 0.8
+        },
+        "metadata_expectations": {
+          "target_parameter": "slope",
+          "bootstrap_type": "multiplier",
+          "source_estimator": "phase6_cck_backend",
+          "dose_est_method": "cck"
+        }
+      },
+      "exact_rule_targets": {
+        "unsupported_eventstudy_message": "Lepski adaptive dimension selection is not supported in event-study aggregation"
+      }
+    }
+  }
+}

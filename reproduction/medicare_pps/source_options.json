@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1",
+  "application_id": "medicare-pps-hospitals",
+  "verified_on": "2026-04-08",
+  "primary_sources": [
+    {
+      "id": "aha_direct_license",
+      "provider": "AHA Data",
+      "url": "https://www.ahadata.com/aha-annual-survey-database",
+      "access": "license-required",
+      "coverage_note": "Historical data dates back to 1946 and electronic data is available from 1980 forward.",
+      "why_it_matches_phase7": "Matches the paper's stated AHA annual-survey source and the required 1980-1986 hospital panel window."
+    },
+    {
+      "id": "nber_affiliate_extract",
+      "provider": "National Bureau of Economic Research",
+      "url": "https://www.nber.org/research/annual-survey-hospitals",
+      "access": "restricted",
+      "eligibility": "Access is limited to NBER-affiliated faculty projects; graduate students must work with Health Forum or the AHA directly.",
+      "delivery": "NBER IT prepares variable/year extracts on its secure servers under the AHA license agreement.",
+      "why_it_matches_phase7": "Still uses the same AHA Annual Survey source, so it preserves the paper's empirical source chain."
+    }
+  ],
+  "public_substitutes": [
+    {
+      "id": "cms_hcris_hospital_cost_reports",
+      "provider": "Centers for Medicare & Medicaid Services",
+      "url": "https://www.cms.gov/data-research/statistics-trends-and-reports/cost-reports/hospital-2552-1996-form",
+      "coverage_start_year": 1996,
+      "parity_viability": "insufficient-for-1980-1986-paper-parity",
+      "parity_claim_allowed": false,
+      "allowed_use": "descriptive-or-scaffold-only",
+      "gap_note": "Useful for later hospital panels, but it starts after the paper's 1980-1986 design window and cannot recreate the published Medicare PPS sample contract."
+    },
+    {
+      "id": "nber_hcris_hosp",
+      "provider": "National Bureau of Economic Research",
+      "url": "https://www.nber.org/research/data/hcris-hosp",
+      "coverage_start_year": 1996,
+      "parity_viability": "insufficient-for-1980-1986-paper-parity",
+      "parity_claim_allowed": false,
+      "allowed_use": "descriptive-or-scaffold-only",
+      "gap_note": "A cleaned public wrapper around HCRIS, but it inherits the same post-1995 start date and therefore cannot deliver paper-level parity."
+    }
+  ]
+}
