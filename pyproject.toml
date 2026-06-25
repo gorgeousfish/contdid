@@ -4,7 +4,7 @@ build-backend = "contdid_build_backend"
 backend-path = ["build_backend"]
 
 [project]
-name = "contdid-py"
+name = "contdid"
 version = "0.1.0"
 description = "Continuous-dose Difference-in-Differences reporting tools for Python."
 readme = "README.md"
@@ -46,7 +46,7 @@ all-backends = ["polars>=0.20", "pyarrow>=12.0"]
 dev = ["pytest>=7.0", "pytest-cov>=4.0", "mypy>=1.0"]
 
 [project.urls]
-Repository = "https://github.com/gorgeousfish/contdid-py"
+Repository = "https://github.com/gorgeousfish/contdid"
 "Method paper" = "https://arxiv.org/abs/2107.02637"
 "Reference R package" = "https://github.com/bcallaway11/contdid"
 "Reference documentation" = "https://bcallaway11.github.io/contdid/"
