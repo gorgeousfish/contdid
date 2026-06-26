@@ -2,6 +2,10 @@
 
 **Continuous Treatment Difference-in-Differences**
 
+<p align="center">
+  <img src="image/image.png" alt="A Matter of Degree — Continuous-Treatment Difference-in-Differences" width="100%">
+</p>
+
 Estimate the full dose-response curve when treatments vary in intensity, rather than reducing continuous policy variation to a single coefficient.
 
 ## Statement of Need
