@@ -297,9 +297,6 @@ always yields identical output regardless of thread count.
 
 ### Future Directions
 
-- Covariate adjustment under conditional parallel trends, pending complete estimation theory for the propensity-score reweighting step
-- Multi-valued discrete treatment via the saturated regression estimator of Assumption 4b in Caetano et al. (2024)
-- Joint coverage theory for multi-period CCK aggregation (extending the two-period uniform band to event-study designs)
 - Additional DGP scenarios for simulation and testing
 
 ## Citation

@@ -8,12 +8,22 @@
       "SIM-002-linear-dose",
       "SIM-003-quadratic-dose",
       "SIM-004-staggered-eventstudy-null",
-      "SIM-005-cck-two-period"
+      "SIM-005-cck-two-period",
+      "SIM-006-cubic-dose",
+      "SIM-007-sine-dose",
+      "SIM-008-threshold-dose",
+      "SIM-009-staggered-linear-dose",
+      "SIM-010-large-panel"
     ],
     "seed_candidates": [
       1234,
       20260407,
-      20261234
+      20261234,
+      20260601,
+      20260602,
+      20260603,
+      20260604,
+      20260605
     ],
     "seed_registry": [
       {
@@ -35,6 +45,26 @@
       {
         "dgp_id": "SIM-005-cck-two-period",
         "default_seed": 20261234
+      },
+      {
+        "dgp_id": "SIM-006-cubic-dose",
+        "default_seed": 20260601
+      },
+      {
+        "dgp_id": "SIM-007-sine-dose",
+        "default_seed": 20260602
+      },
+      {
+        "dgp_id": "SIM-008-threshold-dose",
+        "default_seed": 20260603
+      },
+      {
+        "dgp_id": "SIM-009-staggered-linear-dose",
+        "default_seed": 20260604
+      },
+      {
+        "dgp_id": "SIM-010-large-panel",
+        "default_seed": 20260605
       }
     ],
     "comparison_targets": [

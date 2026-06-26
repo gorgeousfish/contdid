@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from functools import lru_cache
 from numbers import Integral
 from typing import Any
@@ -29,8 +30,13 @@ _SUPPORTED_DGP_IDS = (
     "SIM-003-quadratic-dose",
     "SIM-004-staggered-eventstudy-null",
     "SIM-005-cck-two-period",
+    "SIM-006-cubic-dose",
+    "SIM-007-sine-dose",
+    "SIM-008-threshold-dose",
+    "SIM-009-staggered-linear-dose",
+    "SIM-010-large-panel",
 )
-_SCENARIO_DEFAULTS = {
+_SCENARIO_DEFAULTS: dict[str, dict[str, Any]] = {
     "SIM-004-staggered-eventstudy-null": {
         "num_time_periods": 4,
         "num_groups": 4,
@@ -47,6 +53,57 @@ _SCENARIO_DEFAULTS = {
         "dose_linear_effect": 1.0,
         "dose_quadratic_effect": 0.2,
     },
+    "SIM-006-cubic-dose": {
+        "num_time_periods": 2,
+        "num_groups": 2,
+        "pg": [0.75],
+        "pu": 0.25,
+        "dose_linear_effect": 1.0,
+        "dose_quadratic_effect": -0.5,
+        "dose_cubic_effect": 0.8,
+    },
+    "SIM-007-sine-dose": {
+        "num_time_periods": 2,
+        "num_groups": 2,
+        "pg": [0.75],
+        "pu": 0.25,
+        "sine_amplitude": 2.0,
+        "sine_omega": math.pi,
+    },
+    "SIM-008-threshold-dose": {
+        "num_time_periods": 2,
+        "num_groups": 2,
+        "pg": [0.75],
+        "pu": 0.25,
+        "threshold_d0": 0.5,
+        "threshold_slope": 3.0,
+    },
+    "SIM-009-staggered-linear-dose": {
+        "num_time_periods": 4,
+        "num_groups": 4,
+        "pg": [0.2, 0.2, 0.2],
+        "pu": 0.4,
+        "dose_linear_effect": 1.5,
+        "dose_quadratic_effect": 0.0,
+    },
+    "SIM-010-large-panel": {
+        "num_time_periods": 10,
+        "num_groups": 10,
+        "pg": [0.066, 0.066, 0.066, 0.066, 0.066, 0.067, 0.067, 0.067, 0.069],
+        "pu": 0.4,
+        "dose_linear_effect": 1.0,
+        "dose_quadratic_effect": 0.0,
+        "n_default": 10000,
+    },
+}
+
+# Hardcoded seeds for extended DGP scenarios (not in the JSON contract)
+_EXTENDED_SEEDS: dict[str, int] = {
+    "SIM-006-cubic-dose": 20260601,
+    "SIM-007-sine-dose": 20260602,
+    "SIM-008-threshold-dose": 20260603,
+    "SIM-009-staggered-linear-dose": 20260604,
+    "SIM-010-large-panel": 20260605,
 }
 
 
@@ -72,10 +129,13 @@ def _manifest_effect_profiles() -> dict[str, dict[str, float]]:
 
 @lru_cache(maxsize=1)
 def _seed_registry() -> dict[str, int]:
-    return {
+    registry = {
         entry["dgp_id"]: entry["default_seed"]
         for entry in _load_numerical_truth()["seed_registry"]
     }
+    for k, v in _EXTENDED_SEEDS.items():
+        registry.setdefault(k, v)
+    return registry
 
 
 def _validate_simulation_seed(seed: int | None) -> int | None:
@@ -89,8 +149,39 @@ def _validate_simulation_seed(seed: int | None) -> int | None:
     return checked_seed
 
 
+def _compute_treatment_signal(
+    D: np.ndarray,
+    dgp_id: str,
+    scenario_defaults: dict[str, Any],
+    dose_linear_effect: float,
+    dose_quadratic_effect: float,
+) -> np.ndarray:
+    """Compute the true ATT(d) treatment signal for each unit.
+
+    For polynomial DGPs (SIM-001 to SIM-005, SIM-009, SIM-010):
+        signal = alpha_1*d + alpha_2*d^2
+
+    For SIM-006 (cubic): alpha_1*d + alpha_2*d^2 + alpha_3*d^3
+    For SIM-007 (sine):  A * sin(omega * d)
+    For SIM-008 (threshold): 0 for d < d0, beta*(d - d0) for d >= d0
+    """
+    if dgp_id == "SIM-006-cubic-dose":
+        cubic = float(scenario_defaults.get("dose_cubic_effect", 0.0))
+        return dose_linear_effect * D + dose_quadratic_effect * (D**2) + cubic * (D**3)
+    elif dgp_id == "SIM-007-sine-dose":
+        amplitude = float(scenario_defaults.get("sine_amplitude", 2.0))
+        omega = float(scenario_defaults.get("sine_omega", math.pi))
+        return amplitude * np.sin(omega * D)
+    elif dgp_id == "SIM-008-threshold-dose":
+        d0 = float(scenario_defaults.get("threshold_d0", 0.5))
+        slope = float(scenario_defaults.get("threshold_slope", 3.0))
+        return np.where(D >= d0, slope * (D - d0), 0.0)
+    else:
+        return dose_linear_effect * D + dose_quadratic_effect * (D**2)
+
+
 def simulate_contdid_data(
-    n: int = 5000,
+    n: int | str = 5000,
     num_time_periods: int = 4,
     num_groups: int = 4,
     pg: list[float] | None = None,
@@ -106,7 +197,8 @@ def simulate_contdid_data(
     suitable for verifying estimation pipelines and numerical accuracy.
 
     Args:
-        n: Number of units (default 5000).
+        n: Number of units (default 5000). Can also pass a dgp_id string
+            as the first positional argument for convenience.
         num_time_periods: Number of time periods (default 4).
         num_groups: Number of timing groups including never-treated (default 4).
         pg: Probabilities for each treated group. Must sum to 1-pu with pu.
@@ -123,6 +215,11 @@ def simulate_contdid_data(
         ValueError: If dgp_id is unsupported or parameter constraints are violated.
         ContDIDValidationError: If generated data fails panel validation.
     """
+    # Allow passing dgp_id as first positional argument for convenience:
+    #   simulate_contdid_data('SIM-006-cubic-dose')
+    if isinstance(n, str):
+        dgp_id = n
+        n = 5000
 
     defaults = _manifest_defaults()
     effect_profiles = _manifest_effect_profiles()
@@ -135,6 +232,10 @@ def simulate_contdid_data(
     num_time_periods = int(scenario_defaults.get("num_time_periods", num_time_periods))  # type: ignore[call-overload]
     num_groups = int(scenario_defaults.get("num_groups", num_groups))  # type: ignore[call-overload]
 
+    # SIM-010 has a larger default n
+    if dgp_id == "SIM-010-large-panel" and n == 5000:
+        n = int(scenario_defaults.get("n_default", 10000))
+
     if num_groups != num_time_periods:
         raise ValueError("simulate_contdid_data currently requires num_groups == num_time_periods")
 
@@ -143,7 +244,7 @@ def simulate_contdid_data(
     if pu is None:
         pu = float(scenario_defaults.get("pu", defaults["pu"]))  # type: ignore[arg-type]
     if seed is None:
-        seed = seed_registry[dgp_id]
+        seed = seed_registry.get(dgp_id, 1234)
     seed = _validate_simulation_seed(seed)
 
     effect_profile = effect_profiles.get(
@@ -154,9 +255,9 @@ def simulate_contdid_data(
         },
     )
     if dose_linear_effect is None:
-        dose_linear_effect = float(effect_profile["dose_linear_effect"])  # type: ignore[arg-type]
+        dose_linear_effect = float(effect_profile.get("dose_linear_effect", 0.0))  # type: ignore[arg-type]
     if dose_quadratic_effect is None:
-        dose_quadratic_effect = float(effect_profile["dose_quadratic_effect"])  # type: ignore[arg-type]
+        dose_quadratic_effect = float(effect_profile.get("dose_quadratic_effect", 0.0))  # type: ignore[arg-type]
 
     if len(pg) != num_groups - 1:
         raise ValueError("pg must contain one probability for each treated group")
@@ -175,7 +276,9 @@ def simulate_contdid_data(
     untreated_outcomes = np.column_stack(
         [period + eta + rng.normal(size=n) for period in time_periods]
     )
-    treated_signal = dose_linear_effect * D + dose_quadratic_effect * (D**2)
+    treated_signal = _compute_treatment_signal(
+        D, dgp_id, scenario_defaults, dose_linear_effect, dose_quadratic_effect
+    )
     treated_outcomes = np.column_stack(
         [treated_signal + period + eta + rng.normal(size=n) for period in time_periods]
     )
