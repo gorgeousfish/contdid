@@ -303,7 +303,7 @@ always yields identical output regardless of thread count.
 
 **APA:**
 
-Cai, X., & Xu, W. (2025). *contdid: Continuous Treatment Difference-in-Differences for Python* (Version 0.1.0) [Computer software]. https://github.com/gorgeousfish/contdid
+Cai, X., & Xu, W. (2026). *contdid: Continuous Treatment Difference-in-Differences for Python* (Version 0.1.0) [Computer software]. https://github.com/gorgeousfish/contdid
 
 **BibTeX:**
 
@@ -311,7 +311,7 @@ Cai, X., & Xu, W. (2025). *contdid: Continuous Treatment Difference-in-Differenc
 @software{contdid,
   title = {contdid: Continuous Treatment Difference-in-Differences for Python},
   author = {Cai, Xuanyu and Xu, Wenli},
-  year = {2025},
+  year = {2026},
   url = {https://github.com/gorgeousfish/contdid},
   version = {0.1.0}
 }
@@ -320,20 +320,23 @@ Cai, X., & Xu, W. (2025). *contdid: Continuous Treatment Difference-in-Differenc
 **Method papers:**
 
 ```bibtex
-@article{caetano2024continuous,
-  title = {Difference in Differences with Continuous Treatment},
-  author = {Caetano, Gregorio and Callaway, Brantly and Payne, Stroud and Rodrigues, Hugo Sant'Anna},
+@techreport{callaway2024continuous,
+  title = {Difference-in-Differences with a Continuous Treatment},
+  author = {Callaway, Brantly and Goodman-Bacon, Andrew and Sant'Anna, Pedro H.C.},
   year = {2024},
-  journal = {arXiv preprint arXiv:2107.02637v7},
-  url = {https://arxiv.org/abs/2107.02637}
+  institution = {National Bureau of Economic Research},
+  type = {Working Paper},
+  number = {w32117}
 }
 
-@article{chen2024adaptive,
+@article{chen2025adaptive,
   title = {Adaptive Estimation and Uniform Confidence Bands for Nonparametric Structural Functions and Elasticities},
-  author = {Chen, Xiaohong and Christensen, Timothy M. and Kankanala, Siddhartha},
-  year = {2024},
-  journal = {arXiv preprint arXiv:2107.11869v3},
-  url = {https://arxiv.org/abs/2107.11869}
+  author = {Chen, Xiaohong and Christensen, Timothy and Kankanala, Siddhartha},
+  year = {2025},
+  journal = {Review of Economic Studies},
+  volume = {92},
+  number = {1},
+  pages = {162--196}
 }
 ```
 
@@ -352,17 +355,8 @@ Cai, X., & Xu, W. (2025). *contdid: Continuous Treatment Difference-in-Differenc
 
 Based on:
 
-- Caetano, G., Callaway, B., Payne, S., & Rodrigues, H. S. (2024). "Difference in Differences with Continuous Treatment." arXiv:2107.02637v7.
-- Chen, X., Christensen, T. M., & Kankanala, S. (2024). "Adaptive Estimation and Uniform Confidence Bands for Nonparametric Structural Functions and Elasticities." arXiv:2107.11869v3.
-
-## Related Packages
-
-| Package                                        | Language | Description                                 |
-| ---------------------------------------------- | -------- | ------------------------------------------- |
-| [contdid](https://github.com/bcallaway11/contdid) | R        | Reference implementation by Callaway et al. |
-| [contdid-stata](https://github.com/contdid/contdid-stata) | Stata    | Stata implementation for continuous DiD     |
-| [did](https://github.com/bcallaway11/did)         | R        | Binary treatment staggered DiD              |
-| [pydid](https://github.com/d2cml-ai/pydid)        | Python   | Binary treatment DiD for Python             |
+- Callaway, B., Goodman-Bacon, A., & Sant'Anna, P. H. (2024). "Difference-in-Differences with a Continuous Treatment" (No. w32117). National Bureau of Economic Research.
+- Chen, X., Christensen, T., & Kankanala, S. (2025). "Adaptive Estimation and Uniform Confidence Bands for Nonparametric Structural Functions and Elasticities." *Review of Economic Studies*, 92(1), 162–196.
 
 ## License
 
