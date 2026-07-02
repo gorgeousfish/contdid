@@ -1,7 +1,7 @@
-contdid-py documentation
-========================
+contdid documentation
+=====================
 
-``contdid-py`` is the checked Python release surface for
+``contdid`` is the checked Python release surface for
 continuous-treatment Difference-in-Differences estimators. The package keeps
 the public API traceable to the paper contracts, the reference R package, and
 the release verification artifacts in this repository.

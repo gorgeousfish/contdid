@@ -10,7 +10,7 @@ sys.path.insert(0, str(PY_SRC))
 project = "contdid"
 author = "Brantly Callaway, Andrew Goodman-Bacon, and Pedro H. C. Sant'Anna"
 copyright = "2026, contdid contributors"
-release = "0.1.0a0"
+release = "0.1.0"
 
 extensions = [
     "sphinx.ext.autodoc",

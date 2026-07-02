@@ -4,11 +4,11 @@ User Guide
 Installation
 ------------
 
-Install the package from the repository root with an editable install:
+Install the package with an editable install:
 
 .. code-block:: bash
 
-   pip install -e contdid-py
+   pip install -e .
 
 Core Objects
 ------------
@@ -18,9 +18,9 @@ the runtime validators and estimators. The default columns are ``id``,
 ``time_period``, ``Y``, ``G``, and ``D``.
 
 ``ContDIDSpec`` records the requested estimand, aggregation, dose estimator,
-control group, and inference controls. The checked public routes currently use
-continuous treatments and hard-fail unsupported treatment types or unsupported
-CCK/event-study combinations.
+control group, and inference controls. The supported routes use continuous
+treatments and hard-fail unsupported treatment types or unsupported CCK/event-study
+combinations.
 
 ``ContDIDResult`` stores the public result payload: estimand label, grid,
 estimate, standard error, optional critical value, confidence interval,
@@ -63,18 +63,17 @@ returns the saved ``pathlib.Path``.
 Real-World Tutorial Provenance
 ------------------------------
 
-The checked Medicare scaffold tutorial is descriptive-or-scaffold-only. Before
-reusing it in a notebook, inspect
-``reproduction/phase9_release_examples/consumer-outputs/medicare_release_walkthrough.json``:
-``source_surface`` must stay ``prepare_medicare_pps_panel`` and
-``package_surfaces`` must point to the checked public estimators used by the
-packet. Those fields keep the source route separate from the estimator routes,
-so the tutorial cannot be mistaken for licensed Medicare PPS parity evidence.
+The Medicare scaffold tutorial is descriptive-or-scaffold-only. Before reusing
+it in a notebook, inspect the walkthrough JSON output:
+``source_surface`` must remain ``prepare_medicare_pps_panel`` and
+``package_surfaces`` must point to the public estimators used by the example.
+Those fields keep the data-preparation step separate from the estimator calls,
+so the tutorial cannot be mistaken for licensed Medicare PPS replication evidence.
 
 Supported Public Routes
 -----------------------
 
-The checked v1 Python surface exposes:
+The public API exposes:
 
 - ``simulate_contdid_data`` for synthetic panels.
 - ``estimate_dose_effects`` and ``estimate_dose_level_effects`` for ``ATT(d)``.
@@ -93,25 +92,26 @@ positive treatment timing to start in the post period, and an untreated ``D == 0
 benchmark. Requests outside that shape hard-fail instead of falling through to
 an unchecked approximation.
 
-The public error surface is part of the release contract. Staggered-adoption CCK
-requests raise ``cck estimator not supported with staggered adoption yet`` before
-the generic multi-period or event-study guards. CCK event-study requests raise
+The error messages are part of the documented boundary conditions.
+Staggered-adoption CCK requests raise
+``cck estimator not supported with staggered adoption yet`` before the generic
+multi-period or event-study guards. CCK event-study requests raise
 ``event study not supported with cck estimator yet``; ``base_period`` and
-``control_group`` options must not relax that boundary. The checked event-study
-control groups remain ``notyettreated`` and ``nevertreated`` for the parametric
+``control_group`` options must not relax that boundary. The supported event-study
+control groups are ``notyettreated`` and ``nevertreated`` for the parametric
 event-study routes.
 
 The runtime CCK backend is a fixed quadratic polynomial scaffold used for the
 supported two-period dose surface. It does not implement the paper's
-data-driven K-hat, Lepski, or ``npiv`` sieve selection, so release-facing claims
-must not describe it as full adaptive CCK parity. Event-study inference also
-requires locally identified post-treatment support with inference degrees of freedom
-before reporting uncertainty.
+data-driven K-hat, Lepski, or ``npiv`` sieve selection, so it must not be
+described as full adaptive CCK. Event-study inference also requires locally
+identified post-treatment support with inference degrees of freedom before
+reporting uncertainty.
 
 Data Rules
 ----------
 
-Real-world datasets used for audits, cross-checks, or regression tests must be
-placed under the repository-level ``data/`` directory with source, license, and
-consumer notes. Synthetic fixtures and generated Monte Carlo outputs may remain
-with their test or reproduction bundles.
+Real-world datasets used for cross-checks or regression tests should be placed
+under the repository-level ``data/`` directory with source, license, and usage
+notes. Synthetic fixtures and generated Monte Carlo outputs may remain with
+their test or reproduction bundles.
