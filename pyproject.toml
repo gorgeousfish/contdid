@@ -1,23 +1,18 @@
 [build-system]
-requires = []
-build-backend = "contdid_build_backend"
-backend-path = ["build_backend"]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "contdid"
 version = "0.1.0"
-description = "Checked Python release surface for continuous-treatment DID estimators."
-readme = { text = """# contdid
-
-`contdid` provides the checked Python release surface for continuous-treatment DID estimators and difference-in-differences designs with continuous treatments. The package ships the public API, runtime validation, release examples, and contract assets used to audit the Python implementation against the paper and the reference `contdid` R package.
-""", content-type = "text/markdown" }
+description = "Continuous Treatment Difference-in-Differences for Python"
+readme = "README.md"
 requires-python = ">=3.11"
 license = "AGPL-3.0-only"
 license-files = ["LICENSE"]
 authors = [
-  { name = "Brantly Callaway", email = "brantly.callaway@uga.edu" },
-  { name = "Andrew Goodman-Bacon", email = "andrew@goodman-bacon.com" },
-  { name = "Pedro H. C. Sant'Anna", email = "pedro.h.santanna@emory.edu" },
+  { name = "Xuanyu Cai", email = "xuanyuCAI@outlook.com" },
+  { name = "Wenli Xu", email = "wlxu@cityu.edu.mo" },
 ]
 keywords = [
   "causal-inference",
@@ -42,28 +37,11 @@ dependencies = [
 ]
 
 [project.urls]
-Paper = "https://arxiv.org/abs/2107.02637"
-"Reference R package" = "https://github.com/bcallaway11/contdid"
-"Reference documentation" = "https://bcallaway11.github.io/contdid/"
+Repository = "https://github.com/gorgeousfish/contdid"
+Documentation = "https://contdid.readthedocs.io"
 
-[tool.contdid-build]
+[tool.hatch.build.targets.wheel]
 packages = ["src/contdid"]
-
-[tool.contdid-build.force-include]
-"src/phase10_frontier_expectations.py" = "phase10_frontier_expectations.py"
-"contracts/phase2/numerical_truth_contract_v1.json" = "contdid/contracts/phase2/numerical_truth_contract_v1.json"
-"contracts/phase2/paper_truth_contract.json" = "contdid/contracts/phase2/paper_truth_contract.json"
-"contracts/phase2/phase2_contract_template.json" = "contdid/contracts/phase2/phase2_contract_template.json"
-"contracts/phase2/symbol_map_contract.json" = "contdid/contracts/phase2/symbol_map_contract.json"
-"contracts/phase9/public_api_contract_v1.json" = "contdid/contracts/phase9/public_api_contract_v1.json"
-"contracts/phase10/package_phase_verification_manifest.json" = "contdid/contracts/phase10/package_phase_verification_manifest.json"
-"contracts/phase11/cck_unsupported_boundary_contract.json" = "contdid/contracts/phase11/cck_unsupported_boundary_contract.json"
-"contracts/phase10/runs/package_phase_verification_summary.json" = "contdid/contracts/phase10/runs/package_phase_verification_summary.json"
-"contracts/phase10/runs/package_phase_verification_inventory.md" = "contdid/contracts/phase10/runs/package_phase_verification_inventory.md"
-"contracts/phase10/runs/package_phase_verification_rollup.json" = "contdid/contracts/phase10/runs/package_phase_verification_rollup.json"
-"reproduction/medicare_pps/manifest.json" = "contdid/reproduction/medicare_pps/manifest.json"
-"reproduction/medicare_pps/source_options.json" = "contdid/reproduction/medicare_pps/source_options.json"
-"reproduction/simulate_contdid/manifest.json" = "contdid/reproduction/simulate_contdid/manifest.json"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
