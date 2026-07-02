@@ -1,55 +1,12 @@
-"""Public estimator surface for contdid."""
+"""contdid: Continuous Treatment Difference-in-Differences for Python."""
 
 __version__ = "0.1.0"
 
-from .contracts import (
-    CCKBoundaryContractError,
-    DataShapeBoundaryContractError,
-    MethodReferenceContractError,
-    Phase2ContractError,
-    Phase11ContractError,
-    Phase12ContractError,
-    PublicAPIContractError,
-    load_cck_boundary_contract,
-    load_data_shape_boundary_contract,
-    load_method_reference_contract,
-    load_phase11_cck_boundary_contract_bundle,
-    load_phase12_data_shape_contract_bundle,
-    load_public_api_contract,
-    load_public_api_contract_bundle,
-    load_phase2_contract_bundle,
-    validate_cck_boundary_contract,
-    validate_data_shape_boundary_contract,
-    validate_method_reference_contract,
-    validate_phase11_cck_boundary_contract_bundle,
-    validate_phase12_data_shape_contract_bundle,
-    validate_public_api_contract,
-    validate_public_api_contract_bundle,
-    validate_phase2_contract_bundle,
-)
-from .adapters import (
-    AdapterRegistry,
-    ArrowAdapter,
-    convert_to_pandas,
-    DataFrameAdapter,
-    get_adapter_registry,
-    PandasAdapter,
-    PolarsAdapter,
-)
-from .bspline import even_knots, quantile_knots
+from .api import cont_did, pre_trend_test_from_result
 from .data import PanelData
-from .empirical import (
-    EmpiricalScaffoldResult,
-    load_medicare_pps_example_panel,
-    load_medicare_pps_manifest,
-    load_medicare_pps_source_options,
-    prepare_medicare_pps_panel,
-    resolve_medicare_pps_source,
-)
 from .estimation import (
     build_dose_grid,
     estimate_dose_effects,
-    estimate_dose_effects_multiperiod,
     estimate_dose_level_effects,
     estimate_dose_slope_effects,
 )
@@ -62,126 +19,36 @@ from .inference import (
 from .results import ContDIDResult
 from .simulate import simulate_contdid_data
 from .specs import ContDIDSpec
-from .plotting import plot, plot_dose_response, plot_eventstudy
-from .summary import summary, to_dataframe, to_csv, to_latex
-from .api import cont_did, pre_trend_test_from_result
-from .pipeline import FittablePanel
-from .pretest import pre_trend_test, PreTrendTestResult
-from .registry import EstimatorRegistry, register_estimator, get_default_registry
-from .base_estimator import (
-    BaseEstimator,
-    EstimatorCapabilities,
-    EstimatorResult,
-    LinearDoseEstimator,
-    validate_estimator_result,
-    validate_influence_matrix,
-)
-from .hooks import (
-    HookRegistry,
-    HookStage,
-    ReadOnlyResult,
-    get_hook_registry,
-    register_hook,
-    unregister_hook,
-)
 from .validation import (
     ContDIDValidationError,
-    ValidationIssue,
-    ValidationReport,
-    ValidationSeverity,
-    ValidationStrictness,
     validate_panel_data,
-    validate_panel_data_report,
     validate_spec,
 )
 
 __all__ = [
-    "cont_did",
-    "pre_trend_test",
-    "pre_trend_test_from_result",
-    "PreTrendTestResult",
     "__version__",
-    "ContDIDResult",
-    "ContDIDSpec",
-    "ContDIDValidationError",
-    "EmpiricalScaffoldResult",
+    # High-level API
+    "cont_did",
+    "pre_trend_test_from_result",
+    # Core data structures
     "PanelData",
-    "FittablePanel",
-    "AdapterRegistry",
-    "ArrowAdapter",
-    "convert_to_pandas",
-    "DataFrameAdapter",
-    "get_adapter_registry",
-    "PandasAdapter",
-    "PolarsAdapter",
-    "CCKBoundaryContractError",
-    "DataShapeBoundaryContractError",
-    "MethodReferenceContractError",
-    "Phase2ContractError",
-    "Phase11ContractError",
-    "Phase12ContractError",
-    "PublicAPIContractError",
-    "attach_inference_payload",
+    "ContDIDSpec",
+    "ContDIDResult",
+    # Estimation
     "build_dose_grid",
-    "build_confidence_band",
-    "compute_multiplier_bootstrap",
-    "load_medicare_pps_example_panel",
-    "load_medicare_pps_manifest",
-    "load_medicare_pps_source_options",
-    "prepare_medicare_pps_panel",
-    "resolve_medicare_pps_source",
     "estimate_dose_effects",
-    "estimate_dose_effects_multiperiod",
     "estimate_dose_level_effects",
     "estimate_dose_slope_effects",
     "estimate_eventstudy_effects",
     "estimate_eventstudy_slope_effects",
-    "load_cck_boundary_contract",
-    "load_data_shape_boundary_contract",
-    "load_method_reference_contract",
-    "load_phase2_contract_bundle",
-    "load_phase11_cck_boundary_contract_bundle",
-    "load_phase12_data_shape_contract_bundle",
-    "load_public_api_contract",
-    "load_public_api_contract_bundle",
-    "quantile_knots",
-    "even_knots",
+    # Inference
+    "attach_inference_payload",
+    "build_confidence_band",
+    "compute_multiplier_bootstrap",
+    # Simulation
     "simulate_contdid_data",
+    # Validation
+    "ContDIDValidationError",
     "validate_panel_data",
-    "validate_panel_data_report",
     "validate_spec",
-    "ValidationIssue",
-    "ValidationReport",
-    "ValidationSeverity",
-    "ValidationStrictness",
-    "validate_cck_boundary_contract",
-    "validate_data_shape_boundary_contract",
-    "validate_method_reference_contract",
-    "validate_public_api_contract",
-    "validate_public_api_contract_bundle",
-    "validate_phase2_contract_bundle",
-    "validate_phase11_cck_boundary_contract_bundle",
-    "validate_phase12_data_shape_contract_bundle",
-    "plot",
-    "plot_dose_response",
-    "plot_eventstudy",
-    "summary",
-    "to_dataframe",
-    "to_csv",
-    "to_latex",
-    "EstimatorRegistry",
-    "register_estimator",
-    "get_default_registry",
-    "BaseEstimator",
-    "EstimatorCapabilities",
-    "EstimatorResult",
-    "LinearDoseEstimator",
-    "validate_estimator_result",
-    "validate_influence_matrix",
-    "HookRegistry",
-    "HookStage",
-    "ReadOnlyResult",
-    "get_hook_registry",
-    "register_hook",
-    "unregister_hook",
 ]

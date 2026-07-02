@@ -1,12 +1,12 @@
 # Internal development files - not part of the public package
-tests/
-reproduction/
-runtime-assets/
-scripts/
-contracts/
-build_backend/
-conftest.py
-pytest.ini
+/tests/
+/reproduction/
+/runtime-assets/
+/scripts/
+/contracts/
+/build_backend/
+/conftest.py
+/pytest.ini
 
 # Build artifacts
 dist/
@@ -16,8 +16,13 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .tox/
+.hypothesis/
+.ipynb_checkpoints/
 docs/_build/
 
 # Temporary files
 *.csv
 *.tmp*
+
+# Misc internal scripts at wrong level
+/src/phase10_frontier_expectations.py
