@@ -1,37 +1,23 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.egg-info/
-.eggs/
-
-# Testing
-.pytest_cache/
-.hypothesis/
-.tox/
-.coverage
-htmlcov/
-
-# Type checking / Linting
-.mypy_cache/
-.ruff_cache/
-
-# Build
-dist/
-build/
-build_backend/
-
-# Internal development contracts
+# Internal development files - not part of the public package
+tests/
+reproduction/
+runtime-assets/
+scripts/
 contracts/
+build_backend/
+conftest.py
+pytest.ini
 
-# Environment
-.env
+# Build artifacts
+dist/
+*.egg-info/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+docs/_build/
 
-# IDE
-.ipynb_checkpoints/
-*.swp
-.idea/
-.vscode/
-
-# OS
-.DS_Store
+# Temporary files
+*.csv
+*.tmp*
